@@ -1,4 +1,4 @@
-module github.com/cesario/gotube
+module github.com/iiTzDante/gotube
 
 go 1.25.5
 
