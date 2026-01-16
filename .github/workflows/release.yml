@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build binaries
+        run: |
+          # Linux AMD64
+          GOOS=linux GOARCH=amd64 go build -o gotube-linux-amd64 main.go
+          
+          # Linux ARM64
+          GOOS=linux GOARCH=arm64 go build -o gotube-linux-arm64 main.go
+          
+          # macOS AMD64
+          GOOS=darwin GOARCH=amd64 go build -o gotube-darwin-amd64 main.go
+          
+          # macOS ARM64 (Apple Silicon)
+          GOOS=darwin GOARCH=arm64 go build -o gotube-darwin-arm64 main.go
+          
+          # Windows AMD64
+          GOOS=windows GOARCH=amd64 go build -o gotube-windows-amd64.exe main.go
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            gotube-linux-amd64
+            gotube-linux-arm64
+            gotube-darwin-amd64
+            gotube-darwin-arm64
+            gotube-windows-amd64.exe
+          body: |
+            ## GoTube Release ${{ github.ref_name }}
+            
+            Download the binary for your platform:
+            - **Linux (x64)**: `gotube-linux-amd64`
+            - **Linux (ARM64)**: `gotube-linux-arm64`
+            - **macOS (Intel)**: `gotube-darwin-amd64`
+            - **macOS (Apple Silicon)**: `gotube-darwin-arm64`
+            - **Windows (x64)**: `gotube-windows-amd64.exe`
+            
+            ### Installation
+            ```bash
+            # Linux/macOS
+            chmod +x gotube-*
+            sudo mv gotube-* /usr/local/bin/gotube
+            
+            # Or use go install
+            go install github.com/iiTzDante/gotube@${{ github.ref_name }}
+            ```
+            
+            ### Requirements
+            - FFmpeg (for HD video merging)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
