@@ -1,0 +1,6 @@
+[App]
+Name = GoMusic
+Icon = icon.png
+Identifier = com.gomusic.app
+Version = 1.0.0
+Build = 1

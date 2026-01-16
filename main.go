@@ -15,6 +15,8 @@ import (
 	"github.com/kkdai/youtube/v2"
 )
 
+const appVersion = "1.0.5"
+
 // --- Styles ---
 
 var (
@@ -390,6 +392,11 @@ func (m model) View() string {
 }
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "-v" {
+		fmt.Printf("gotube version %s\n", appVersion)
+		return
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gotube <youtube-url>")
 		os.Exit(1)
